@@ -10,7 +10,13 @@ type StreamData = {
   playbackUrl: string;
 };
 
-const PROMPT_PRESETS = [
+type PromptPreset = {
+  name: string;
+  prompt: string;
+  negativePrompt?: string;
+};
+
+const PROMPT_PRESETS: PromptPreset[] = [
   {
     name: "Bauhaus time traveler",
     prompt:
@@ -26,7 +32,7 @@ const PROMPT_PRESETS = [
     name: "Cyberpunk",
     prompt: "cyberpunk portrait, neon lights",
   },
-] as const;
+];
 
 export default function Page() {
   const [streamData, setStreamData] = useState<StreamData | null>(null);
