@@ -2,13 +2,17 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useBroadcast, usePlayer } from "@daydreamlive/react";
+import DrawCanvas, { type DrawCanvasRef } from "./DrawCanvas";
 
 const TRACK_URL = "/track.mp3";
+// Sample the drawing canvas this often (fps) so the stream gets near real-time frames (~10ms between frames).
+const CANVAS_CAPTURE_FPS = 100;
 
 export default function StreamDemo({ whipUrl }: { whipUrl: string }) {
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
   const [isTrackPlaying, setIsTrackPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const drawCanvasRef = useRef<DrawCanvasRef | null>(null);
 
   const broadcast = useBroadcast({
     whipUrl,
@@ -84,10 +88,8 @@ export default function StreamDemo({ whipUrl }: { whipUrl: string }) {
   }, [toggleFullscreen]);
 
   const handleStart = useCallback(async () => {
-    const stream = await navigator.mediaDevices.getUserMedia({
-      video: { width: 512, height: 512 },
-      audio: false,
-    });
+    if (!drawCanvasRef.current) return;
+    const stream = drawCanvasRef.current.captureStream(CANVAS_CAPTURE_FPS);
     setLocalStream(stream);
     await broadcast.start(stream);
   }, [broadcast]);
@@ -98,7 +100,7 @@ export default function StreamDemo({ whipUrl }: { whipUrl: string }) {
     setLocalStream(null);
   }, [broadcast, localStream]);
 
-  const toggleWebcam = useCallback(() => {
+  const toggleDrawStream = useCallback(() => {
     if (broadcast.status.state === "live") {
       handleStop();
     } else {
@@ -112,12 +114,12 @@ export default function StreamDemo({ whipUrl }: { whipUrl: string }) {
         const target = e.target as Node;
         if (target && "closest" in target && (target as Element).closest?.("input, textarea, select")) return;
         e.preventDefault();
-        toggleWebcam();
+        toggleDrawStream();
       }
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [toggleWebcam]);
+  }, [toggleDrawStream]);
 
   const isBroadcastLive = broadcast.status.state === "live";
   const isPlayerPlaying = player.status.state === "playing";
@@ -125,9 +127,9 @@ export default function StreamDemo({ whipUrl }: { whipUrl: string }) {
 
   const broadcastStatusLabel =
     broadcast.status.state === "connecting"
-      ? "Sending webcam…"
+      ? "Sending drawing…"
       : broadcast.status.state === "live"
-        ? "Webcam streaming"
+        ? "Drawing streaming"
         : broadcast.status.state === "reconnecting"
           ? "Reconnecting…"
           : broadcast.status.state === "error"
@@ -151,17 +153,23 @@ export default function StreamDemo({ whipUrl }: { whipUrl: string }) {
 
   return (
     <div className="stream-demo">
+      {isStreaming && (
+        <div className="stream-demo-live-badge stream-demo-live-badge-top" role="status" aria-live="polite">
+          <span className="stream-demo-live-dot" />
+          Streaming — AI is processing your video
+        </div>
+      )}
       <div className="stream-demo-videos">
         <div className="stream-demo-panel">
-          <h3>Your webcam</h3>
-          <video
-            autoPlay
-            playsInline
-            muted
-            ref={(el) => {
-              if (el && localStream) el.srcObject = localStream;
+          <h3>Your drawing</h3>
+          <DrawCanvas
+            canvasRef={drawCanvasRef}
+            className="stream-demo-draw-box"
+            onFirstDraw={() => {
+              if (broadcast.status.state !== "live") {
+                handleStart();
+              }
             }}
-            className="stream-demo-video-box stream-demo-video-mirror"
           />
         </div>
         <div className="stream-demo-panel">
@@ -171,20 +179,14 @@ export default function StreamDemo({ whipUrl }: { whipUrl: string }) {
             autoPlay
             playsInline
             muted
-            className="stream-demo-video-box stream-demo-video-mirror"
+            className="stream-demo-video-box"
           />
         </div>
       </div>
 
       <div className="stream-demo-below">
-        {isStreaming && (
-          <div className="stream-demo-live-badge" role="status" aria-live="polite">
-            <span className="stream-demo-live-dot" />
-            Streaming — AI is processing your video
-          </div>
-        )}
         <p className={`stream-demo-status ${isBroadcastLive ? "stream-demo-status-live" : ""}`}>
-          Webcam: {broadcastStatusLabel}
+          Drawing: {broadcastStatusLabel}
         </p>
         <p className={`stream-demo-status ${isPlayerPlaying ? "stream-demo-status-live" : ""}`}>
           AI output: {playerStatusLabel}
@@ -195,7 +197,7 @@ export default function StreamDemo({ whipUrl }: { whipUrl: string }) {
             disabled={broadcast.status.state === "live"}
             className="btn btn-start"
             type="button"
-            title="Start webcam (W)"
+            title="Start drawing stream (W)"
           >
             Start
           </button>
@@ -204,7 +206,7 @@ export default function StreamDemo({ whipUrl }: { whipUrl: string }) {
             disabled={broadcast.status.state !== "live"}
             className="btn btn-stop"
             type="button"
-            title="Stop webcam (W)"
+            title="Stop drawing stream (W)"
           >
             Stop
           </button>
@@ -218,7 +220,7 @@ export default function StreamDemo({ whipUrl }: { whipUrl: string }) {
           </button>
         </div>
         <p className="stream-demo-hint">
-          W — start/stop webcam · P — play/pause track · F — fullscreen AI video
+          W — start/stop drawing stream · P — play/pause track · F — fullscreen AI video
         </p>
         {(broadcast.status.state === "error" || player.status.state === "error") && (
           <div className="stream-demo-errors">

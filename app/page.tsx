@@ -18,6 +18,13 @@ type PromptPreset = {
 
 const PROMPT_PRESETS: PromptPreset[] = [
   {
+    name: "Organic noir (bodies, oil, tendrils)",
+    prompt:
+      "drawing, illustration-like quality, white background, anthropomorphic figures, dangling figures, recognizable human forms, faces in profile, faces looking to the front, le human form, human bodies, aztec, mayan, yanomami, NOIR, african, ancestral, ritualistic figures, entangled with oil bubbles like hanging from heaven, inner lights, blood, fire, network of tendrils, veins, umbilical cords, strange colors, abstract, complexity, organic, emerging organic, growth, black hole, metapatterns, phyllotaxis, diatoms, texture, voronoi, and depth, forces, photo-realistic",
+    negativePrompt:
+      "dark background, black background, colored background, grey background",
+  },
+  {
     name: "Bauhaus time traveler",
     prompt:
       "A man of color from the future, Black or Brown or Indigenous, diverse, not white, arms close to the face, spectacular architectural goggles and hats, solid geometries, Mondrian colors only — red, yellow, blue, black, white — Bauhaus and Kandinsky style, Calder-inspired haute couture, Bauhaus-style geometric architectural goggles, very architectural fashion, rich luminous atmospheric background with depth, full environment, no subject extraction, no dark or flat background",
@@ -69,10 +76,7 @@ export default function Page() {
     return (
       <main className="page">
         <header className="page-header">
-          <h1>Bauhaus Time Traveler</h1>
-          <p className="subtitle">
-            prompt: “{prompt}”
-          </p>
+          <h1>In Pursuit of Stolen Ghosts</h1>
         </header>
         <StreamDemo whipUrl={streamData.whipUrl} />
         <p className="playback-hint">
@@ -92,9 +96,9 @@ export default function Page() {
   return (
     <main className="page page-start">
       <header className="page-header">
-        <h1>Bauhaus Time Traveler</h1>
+        <h1>In Pursuit of Stolen Ghosts</h1>
         <p className="subtitle">
-          Real-time AI video. Transform your webcam with Stream Diffusion.
+          Real-time AI video. Draw on the canvas and transform it with Stream Diffusion.
         </p>
       </header>
       <div className="start-form">

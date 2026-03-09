@@ -3,7 +3,7 @@ import "./globals.css";
 import ThemeToggle from "./ThemeToggle";
 
 export const metadata: Metadata = {
-  title: "Bauhaus Time Traveler",
+  title: "In Pursuit of Stolen Ghosts",
   description: "Concept, Programming, Music, and Performance by Marlon Barrios-Holano. Powered by Daydream.",
 };
 

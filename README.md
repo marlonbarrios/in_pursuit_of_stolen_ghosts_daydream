@@ -1,6 +1,6 @@
-# Bauhaus Time Traveler
+# In Pursuit of Stolen Ghosts
 
-Real-time AI video performance. Transform your webcam with [Stream Diffusion](https://github.com/cumulo-autumn/StreamDiffusion) via [Daydream](https://daydream.live)—Mondrian colors, geometric goggles and hats, and a mirror-like view.
+Real-time AI video performance. Draw on the canvas and transform it with [Stream Diffusion](https://github.com/cumulo-autumn/StreamDiffusion) via [Daydream](https://daydream.live).
 
 **Concept, Programming, Music, and Performance by Marlon Barrios-Holano**  
 Powered by [Daydream](https://daydream.live)
@@ -41,15 +41,15 @@ Powered by [Daydream](https://daydream.live)
 
 ## How to use
 
-1. Choose a style preset (default: **Bauhaus time traveler**) or edit the prompt.
+1. Choose a style preset or edit the prompt.
 2. Click **Start stream** to create a Daydream stream.
-3. Allow webcam access, then start the camera and watch the AI output. Use the keyboard shortcuts for a hands-free performance.
+3. Draw on the canvas, then click **Start** (or press **W**) to send your drawing to the AI. Watch the AI output and use the keyboard shortcuts for a hands-free performance.
 
 ### Keyboard shortcuts
 
 | Key | Action |
 |-----|--------|
-| **W** | Start or stop webcam |
+| **W** | Start or stop drawing stream |
 | **P** | Play or pause track |
 | **F** | Toggle fullscreen on the AI video |
 

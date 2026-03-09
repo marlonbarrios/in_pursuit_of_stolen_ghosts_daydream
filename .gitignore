@@ -11,6 +11,7 @@ node_modules
 # Next
 .next
 out
+tsconfig.tsbuildinfo
 
 # Debug
 npm-debug.log*
