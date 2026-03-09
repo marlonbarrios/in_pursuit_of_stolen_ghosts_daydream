@@ -8,11 +8,40 @@ const TRACK_URL = "/track.mp3";
 // Sample the drawing canvas this often (fps) so the stream gets near real-time frames (~10ms between frames).
 const CANVAS_CAPTURE_FPS = 100;
 
-export default function StreamDemo({ whipUrl }: { whipUrl: string }) {
+type StreamDemoProps = {
+  whipUrl: string;
+  streamId: string;
+  prompt: string;
+  negativePrompt: string;
+};
+
+export default function StreamDemo({ whipUrl, streamId, prompt, negativePrompt }: StreamDemoProps) {
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
   const [isTrackPlaying, setIsTrackPlaying] = useState(false);
+  const [anchoring, setAnchoring] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const drawCanvasRef = useRef<DrawCanvasRef | null>(null);
+
+  const handleReapplyPrompt = useCallback(async () => {
+    setAnchoring(true);
+    try {
+      const res = await fetch("/api/anchor-stream", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          streamId,
+          prompt: prompt.trim(),
+          negativePrompt: (negativePrompt ?? "").trim(),
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error ?? "Failed to re-apply prompt");
+      }
+    } finally {
+      setAnchoring(false);
+    }
+  }, [streamId, prompt, negativePrompt]);
 
   const broadcast = useBroadcast({
     whipUrl,
@@ -217,6 +246,15 @@ export default function StreamDemo({ whipUrl }: { whipUrl: string }) {
             title="Toggle track (or press P)"
           >
             {isTrackPlaying ? "Pause track" : "Play track"}
+          </button>
+          <button
+            onClick={handleReapplyPrompt}
+            disabled={anchoring}
+            className="btn btn-anchor"
+            type="button"
+            title="Re-apply prompt when output drifts from your aesthetic"
+          >
+            {anchoring ? "Re-applying…" : "Re-apply prompt"}
           </button>
         </div>
         <p className="stream-demo-hint">

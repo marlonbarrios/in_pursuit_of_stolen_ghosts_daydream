@@ -24,6 +24,7 @@ export async function POST(request: Request) {
     const negativePrompt =
       typeof body.negativePrompt === "string" ? body.negativePrompt : undefined;
 
+    // Match Bauhaus Time Traveler exactly: SDK, modelId + prompt + negativePrompt only when set.
     const stream = await daydream.streams.create({
       pipeline: "streamdiffusion",
       params: {

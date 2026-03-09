@@ -78,7 +78,12 @@ export default function Page() {
         <header className="page-header">
           <h1>In Pursuit of Stolen Ghosts</h1>
         </header>
-        <StreamDemo whipUrl={streamData.whipUrl} />
+        <StreamDemo
+          whipUrl={streamData.whipUrl}
+          streamId={streamData.id}
+          prompt={prompt}
+          negativePrompt={negativePrompt ?? ""}
+        />
         <p className="playback-hint">
           You can also watch at:{" "}
           <a href={streamData.playbackUrl} target="_blank" rel="noopener noreferrer">
