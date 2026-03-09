@@ -108,10 +108,10 @@ export default function Page() {
             onChange={(e) => {
               const preset = PROMPT_PRESETS.find((p) => p.name === e.target.value);
               if (preset) {
-                setPrompt(preset.prompt);
+                setPrompt(preset.prompt as string);
                 setNegativePrompt(
                   "negativePrompt" in preset && typeof preset.negativePrompt === "string"
-                    ? preset.negativePrompt
+                    ? (preset.negativePrompt as string)
                     : ""
                 );
               }
